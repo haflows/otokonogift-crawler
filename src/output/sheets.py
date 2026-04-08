@@ -151,6 +151,12 @@ class SheetsWriter:
             all_values = worksheet.get_all_values()
             next_row = len(all_values) + 1
 
+            # 前回の書き込みと日付が変わっていれば、先頭に空行を挿入して可読性を高める
+            if len(all_values) > 1:
+                last_row_date = str(all_values[-1][0]).strip()
+                if last_row_date and last_row_date != today:
+                    rows_to_add.insert(0, [""] * len(HEADERS))
+
             # 一括書き込み
             cell_range = f"A{next_row}:J{next_row + len(rows_to_add) - 1}"
             worksheet.update(cell_range, rows_to_add)
