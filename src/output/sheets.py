@@ -153,8 +153,14 @@ class SheetsWriter:
 
             # 前回の書き込みと日付が変わっていれば、先頭に空行を挿入して可読性を高める
             if len(all_values) > 1:
-                last_row_date = str(all_values[-1][0]).strip()
-                if last_row_date and last_row_date != today:
+                # スプレッドシート下部に空行が含まれている場合のエラー（IndexError）を防止
+                last_valid_date = ""
+                for row in reversed(all_values):
+                    if row and len(row) > 0 and str(row[0]).strip():
+                        last_valid_date = str(row[0]).strip()
+                        break
+
+                if last_valid_date and last_valid_date != today:
                     rows_to_add.insert(0, [""] * len(HEADERS))
 
             # 一括書き込み
