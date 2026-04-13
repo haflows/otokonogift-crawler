@@ -90,15 +90,13 @@ class SheetsWriter:
 
     def write_results(self, analyzed_results: list[tuple], sheet_name: Optional[str] = None):
         """
-        分析結果をスプレッドシートに書き込む
+        分析結果をスプレッドシートに書き込む。
+        ネタが0件の日も「本日は更新情報なし」をスプレッドシートに記録する。
 
         Args:
             analyzed_results: [(article, analysis_result), ...] のリスト
             sheet_name: シート名（デフォルトは今月の年月）
         """
-        if not analyzed_results:
-            logger.info("書き込む結果がありません")
-            return
 
         # シート名（月ごとに分ける）
         if not sheet_name:
@@ -142,8 +140,20 @@ class SheetsWriter:
             rows_to_add.append(row)
 
         if not rows_to_add:
-            logger.info("新しい結果はありませんでした（全て重複）")
-            return
+            # 新着ネタが0件（全重複 or Geminiがすべて不採用）のため、スプレッドシートに記録を残す
+            logger.info("新着ネタ無し - 「本日は更新情報なし」をスプレッドシートに記録します")
+            rows_to_add.append([
+                today,
+                "📭",
+                "本日は更新情報なし",
+                "本日は新着のギフトネタがありませんでした。明日をお楽しみに！",
+                "",
+                "",
+                "-",
+                "",
+                "",
+                "確認済み",
+            ])
 
         # バッチで書き込み
         try:

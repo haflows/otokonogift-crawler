@@ -128,8 +128,7 @@ def main():
     logger.info(f"\n✅ AI分析完了: {len(analyzed_results)} 件が採用基準を満たしました")
 
     if not analyzed_results:
-        logger.info("📭 今日は適切なネタがありませんでした。")
-        return
+        logger.info("📭 今日は適切なネタがありませんでした。「更新なし」をスプレッドシートに記録します。")
 
     # ──────────────────────────────────────
     # Step 3: Google Sheetsに書き込み
